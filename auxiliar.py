@@ -134,3 +134,9 @@ def palavras_discografia(dados):
                     continue
 
     return pd.Series(lista).value_counts()
+
+
+albunsbaba = ["When We All Fall Asleep, Where Do We Go?", "Happier Than Ever"]
+qntdpremiação = [[8], [1]]
+dfpremiacao = pd.DataFrame(qntdpremiação, index= albunsbaba)
+print(dfpremiacao)
