@@ -1,46 +1,32 @@
 """
     Este arquivo serve para importar a base da dos utilizada para fazer as análises.
 """
-
-import json
 import time
 import requests
-import auxiliar as aux
+import pandas as pd
 
-#API DEEZER
+# API DEEZER
 dados_artista = requests.get("https://api.deezer.com/artist/9635624")
 dados_tracklist = requests.get(dados_artista.json()["tracklist"])
 
 musicas_data = dados_tracklist.json()["data"]
 
-dicionario = {}
+estrutura_musicas = [{"album": music["album"]["title"].upper(),
+                      "duracao": music["duration"],
+                      "rank": music["rank"],
+                      "nome":music["title"].upper()} for music in musicas_data]
 
-for musica in musicas_data:
-    album = musica["album"]["title"]
+pd.DataFrame(estrutura_musicas).to_csv("dados_musicas.csv")
 
-    try:
-        estrutura = {
-            musica['title'].upper():{
-                "duracao": musica["duration"],
-                "rank" : musica["rank"]
-            }
-        }
-        dicionario[album.upper()].append(estrutura)
-    except KeyError:
-        dicionario[album.upper()] = []
-        estrutura = {
-            musica['title'].upper():{
-                "duracao": musica["duration"],
-                "rank" : musica["rank"]
-            }
-        }
-        dicionario[album.upper()].append(estrutura)
+# API VAGALUME
+# LINK: https://www.vagalume.com.br/
 
-#API VAGALUME
+
 KEY_APY = "a829b6e84397c7592f558d850b888203"
 ARTISTA = "billie-eilish"
 
-requisicao_artista = requests.get("https://www.vagalume.com.br/" + ARTISTA + "/index.js")
+requisicao_artista = requests.get(
+    "https://www.vagalume.com.br/" + ARTISTA + "/index.js")
 
 dados_artista = requisicao_artista.json()
 
@@ -48,24 +34,20 @@ musicas = [x for x in dados_artista["artist"]["lyrics"]["item"]]
 letras = []
 
 for song in musicas:
-    url = "https://api.vagalume.com.br/search.php?musid=" + song["id"] + "&apikey=" + KEY_APY
+    url = "https://api.vagalume.com.br/search.php?musid=" + \
+        song["id"] + "&apikey=" + KEY_APY
     requisicao = requests.get(url)
     try:
-        letras.append(requisicao.json()["mus"][0])
+        letras.append({"letra": requisicao.json()["mus"][0]["text"].upper(),
+                       "nome": requisicao.json()["mus"][0]["name"].upper()})
     except requests.exceptions.JSONDecodeError:
-        time.sleep(4)
+        print(requisicao, "\t-> RESTART MUITAS REQUISICOES")
+        time.sleep(10)
         requisicao = requests.get(url)
-        print("RESTART")
-        print(requisicao)
-        letras.append(requisicao.json()["mus"][0])
+
+        letras.append({"letra": requisicao.json()["mus"][0]["text"].upper(),
+                       "nome": requisicao.json()["mus"][0]["name"].upper()})
     else:
         print(requisicao)
 
-for letra in letras :
-    chaves = aux.encontra_key(letra["name"], dicionario )
-
-    if chaves is not None :
-        dicionario[chaves[0]][chaves[1]][letra["name"].upper()]["letra"] = letra["text"]
-
-with open('data.json', 'w', encoding='utf-8') as fp:
-    json.dump(dicionario, fp)
+pd.DataFrame(letras).to_csv("dados_letras.csv")

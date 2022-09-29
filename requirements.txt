@@ -1,12 +1,4 @@
 pandas==1.4.3
 requests==2.28.1
-
-#apple music awards - Álbum do Ano	- When We All Fall Asleep, Where Do We Go? (2019 ) 
-# Billboard Music Awards - Melhor Álbum da Billboard 200 - When We All Fall Asleep, Where Do We Go? ( 2020 ) 
-# Danish Music Awards - Álbum Estrangeiro do Ano	 - When We All Fall Asleep, Where Do We Go? ( 2019 ) 
-# grammy Awards - Álbum do Ano - When We All Fall Asleep, Where Do We Go? (2020)
-# Grammy Awards - Melhor Álbum Pop Vocal	- When We All Fall Asleep, Where Do We Go? ( 2020 ) 
-# iHeartRadio Music Awards -  Álbum de Rock Alternativo do Ano - When We All Fall Asleep, Where Do We Go? (2020)
-# iHeartRadio Music Awards - Álbum   Alternativo do Ano	- Happier Than Ever ( 2022 ) 
-# Juno Awards - 	Álbum Internacional do Ano - When We All Fall Asleep, Where Do We Go? ( 2020 ) 
-# LOS40 Music Awards - Melhor Álbum Internacional - When We All Fall Asleep, Where Do We Go? ( 2019 ) 
+bs4==4.11.1
+lxml==4.9.1
