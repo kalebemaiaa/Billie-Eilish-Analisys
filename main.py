@@ -95,3 +95,24 @@ for letra in df_letras["letra"]:
 contagem = pd.Series(lista).value_counts()
 
 # Pergunta 5
+
+
+
+
+# Pergunta 6
+
+
+
+#Grupo 3
+
+#Álbum com mais duracao de musica
+
+
+
+
+#Álbum
+
+
+
+
+#Álbum
