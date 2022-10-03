@@ -15,6 +15,8 @@ df_letras = pd.read_csv("dados_letras.csv")
 sns.set_theme()
 fig, ax = plt.subplots(figsize=(7, 3))
 sns.barplot(df_musicas , y = df_musicas["album"], x = df_musicas["rank"], ax=ax)
+ax.set_title("Gráfico do rank das músicas por álbum")
+ax.figure.set_size_inches(12,12)
 plt.show()
 
 
@@ -24,6 +26,8 @@ plt.show()
 sns.set_theme()
 fig, ax = plt.subplots(figsize=(7, 3))
 sns.barplot(df_musicas , y = df_musicas["album"], x = df_musicas["duracao"], ax=ax)
+ax.set_title("Gráfico da duração das músicas por álbum")
+ax.figure.set_size_inches(12,12)
 plt.show()
 
 #Plot pergunta 3 - grafico do rank das musicas total
@@ -31,6 +35,8 @@ plt.show()
 sns.set_theme()
 fig, ax = plt.subplots(figsize=(7, 3))
 sns.barplot(df_musicas , y = df_musicas["nome"], x = df_musicas["rank"], ax=ax)
+ax.set_title("Gráfico do rank de todas as músicas")
+ax.figure.set_size_inches(12,12)
 plt.show()
 
 # Plot pergunta 4 - Duracao musicas total
@@ -38,6 +44,8 @@ plt.show()
 sns.set_theme()
 fig, ax = plt.subplots(figsize=(7, 3))
 sns.barplot(df_musicas , y = df_musicas["nome"], x = df_musicas["duracao"], ax=ax)
+ax.set_title("Gráfico da duração de todas as músicas ")
+ax.figure.set_size_inches(12,12)
 plt.show()
 
 # Plot pergunta 5 - Albuns premiados
