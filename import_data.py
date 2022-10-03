@@ -16,7 +16,7 @@ estrutura_musicas = [{"album": music["album"]["title"].upper(),
                       "rank": music["rank"],
                       "nome":music["title"].upper()} for music in musicas_data]
 
-pd.DataFrame(estrutura_musicas).to_csv("dados_musicas.csv")
+df_musicas = pd.DataFrame(estrutura_musicas)
 
 # API VAGALUME
 # LINK: https://www.vagalume.com.br/
@@ -50,4 +50,16 @@ for song in musicas:
     else:
         print(requisicao)
 
-pd.DataFrame(letras).to_csv("dados_letras.csv")
+df_letras = pd.DataFrame(letras)
+
+lista =[]
+for music_name in df_musicas["nome"]:
+    info = df_letras[df_letras["nome"]==music_name]["letra"].values
+    if len(info) == 1:
+        lista.append(info)
+    else:
+        lista.append(None)
+    
+df_musicas = df_musicas.assign(letras=lista)
+df_musicas.to_csv("dados_musicas.csv")
+    

@@ -119,6 +119,8 @@ contagem = pd.Series(lista).value_counts()
 
 
 
+
+
 #Grupo 3
 
 # Duracao media das músicas
