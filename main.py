@@ -12,28 +12,44 @@ df_letras = pd.read_csv("dados_letras.csv")
 # mais_ouvidas
 indice = df_musicas.groupby(["album"])["rank"].transform(
     max) == df_musicas["rank"]
+# print(df_musicas[indice])
+
 # menos_ouvidas
 indice = df_musicas.groupby(["album"])["rank"].transform(
     min) == df_musicas["rank"]
+# print(df_musicas[indice])
+
 # Pergunta 2
 # longas
 indice = df_musicas.groupby(["album"])["duracao"].transform(
     max) == df_musicas["duracao"]
+# print(df_musicas[indice])
+
+
 # curtas
 indice = df_musicas.groupby(["album"])["duracao"].transform(
     min) == df_musicas["duracao"]
+# print(df_musicas[indice])
 
 # Pergunta 3
 # mais_ouvida
 indice = df_musicas.index == df_musicas["rank"].idxmax()
+# print(df_musicas[indice])
+
 # menos_ouvida
 indice = df_musicas.index == df_musicas["rank"].idxmin()
+# print(df_musicas[indice])
+
 
 # Pergunta 4
 # mais_longa
 indice = df_musicas.index == df_musicas["duracao"].idxmax()
+# print(df_musicas[indice])
+
 # menos_ouvida\
 indice = df_musicas.index == df_musicas["duracao"].idxmin()
+# print(df_musicas[indice])
+
 
 # Pergunta 5
 
@@ -105,14 +121,19 @@ contagem = pd.Series(lista).value_counts()
 
 #Grupo 3
 
-#Álbum com mais duracao de musica
+# Duracao media das músicas
+
+indice = df_musicas["duracao"].median()
+print(indice)
+
+# Variancia da duração das músicas
 
 
+indice = df_musicas["duracao"].var()
+print(indice)
 
 
-#Álbum
+# Mediana da duração das músicas
 
-
-
-
-#Álbum
+indice = df_musicas["duracao"].std()
+print(indice)

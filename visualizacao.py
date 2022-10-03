@@ -12,40 +12,43 @@ df_letras = pd.read_csv("dados_letras.csv")
 
 #Plot pergunta 1 - grafico do rank das musicas por album
 
-# plt.bar(df_musicas["album"], df_musicas["rank"])
-# plt.xticks([])
-# plt.show()
+sns.set_theme()
+fig, ax = plt.subplots(figsize=(7, 3))
+sns.barplot(df_musicas , y = df_musicas["album"], x = df_musicas["rank"], ax=ax)
+plt.show()
+
 
 # Plot pergunta 2 - Duracao musicas por album
 
 
-# plt.bar(df_musicas["album"], df_musicas["duracao"])
-# plt.xticks([])
-# plt.show()
-
+sns.set_theme()
+fig, ax = plt.subplots(figsize=(7, 3))
+sns.barplot(df_musicas , y = df_musicas["album"], x = df_musicas["duracao"], ax=ax)
+plt.show()
 
 #Plot pergunta 3 - grafico do rank das musicas total
 
-# plt.bar(df_musicas["nome"], df_musicas["rank"])
-# plt.xticks(["Maior: Happier Than Ever"])
-# plt.show()
+sns.set_theme()
+fig, ax = plt.subplots(figsize=(7, 3))
+sns.barplot(df_musicas , y = df_musicas["nome"], x = df_musicas["rank"], ax=ax)
+plt.show()
 
 # Plot pergunta 4 - Duracao musicas total
 
-# plt.bar(df_musicas["nome"], df_musicas["duracao"])
-# plt.xticks([])
-# plt.show()
+sns.set_theme()
+fig, ax = plt.subplots(figsize=(7, 3))
+sns.barplot(df_musicas , y = df_musicas["nome"], x = df_musicas["duracao"], ax=ax)
+plt.show()
 
 # Plot pergunta 5 - Albuns premiados
 
-# lista_albuns_premiados = ["Happier Than Ever", "When We All 'Fall Asleep, Where Do We Go?"]
-# lista_numero_premiacoes = [[1],[8]]
-# df_p5 = pd.DataFrame(lista_numero_premiacoes, index=lista_albuns_premiados)
-# plt.bar(["Happier Than Ever","When We All 'Fall Asleep, Where Do We Go?"],[1,8], width=0.13, edgecolor = "red", linewidth=0.7)
-# plt.show()
+lista_albuns_premiados = ["Happier Than Ever", "When We All 'Fall Asleep, Where Do We Go?"]
+lista_numero_premiacoes = [[1],[8]]
+df_p5 = pd.DataFrame(lista_numero_premiacoes, index=lista_albuns_premiados)
+plt.bar(["Happier Than Ever","When We All 'Fall Asleep, Where Do We Go?"],[1,8], width=0.13)
+plt.show()
 
 # plot pergunta 6 - duração e popularidade
 
-# plt.bar(df_musicas["duracao"], df_musicas["rank"])
-# plt.show()
-
+plt.scatter(df_musicas["duracao"], df_musicas["rank"])
+plt.show()
