@@ -1,5 +1,5 @@
 """
-    Este arquivo serve para importar a base da dos utilizada para fazer as anÃ¡lises.
+    Este arquivo serve para importar a base da dos utilizada para fazer as analises.
 """
 from time import sleep
 import requests
@@ -14,13 +14,25 @@ ARTIST_NAME = "billie-eilish"
 # API DEEZER
 BILLIE_ID_DEEZER = "9635624"
 
-def get_data_deezer(artist_id):
+def get_data_deezer(artist_id:str)->pd.DataFrame:
+    """
+    Parameters
+    ----------
+    artist_id : str
+        O id do artista na plataforma do Deezer.
+
+    Returns
+    -------
+    DataFrame
+        Retorna um dataframe com as informações sobre a musica.
+
+    """
+    
     url_artista = f"https://api.deezer.com/artist/{artist_id}"
     dados_artista = requests.get(url_artista)
     dados_tracklist = requests.get(dados_artista.json()["tracklist"])
-    
     musicas_data = dados_tracklist.json()["data"]
-
+    
     estrutura_musicas = [{
         "album": music["album"]["title"].upper(),
         "duracao": music["duration"],
@@ -30,7 +42,23 @@ def get_data_deezer(artist_id):
 
     return pd.DataFrame(estrutura_musicas)
 
-def get_data_vagalume(chave_api, artista_name):
+get_data_deezer(BILLIE_ID_DEEZER)
+
+def get_data_vagalume(chave_api:str, artista_name:str)->pd.DataFrame:
+    """
+    Parameters
+    ----------
+    chave_api : str
+        A key dada ao acessar a api do site vagalume.
+    artista_name : str
+        Nome do artista procurado.
+
+    Returns
+    -------
+    DataFrame
+        Retorna um dataframe com os nomes das musicas e as suas respectibas letras.
+
+    """
     url_artista = f"https://www.vagalume.com.br/{artista_name}/index.js"
     requisicao_artista_json = requests.get(url_artista).json()
     music_data = [id_m for id_m in requisicao_artista_json["artist"]["lyrics"]["item"]]  
@@ -57,7 +85,24 @@ def get_data_vagalume(chave_api, artista_name):
 
     return  pd.DataFrame(letras)
 
-def get_letras(dataframe_musicas, dataframe_letras):
+def get_letras(dataframe_musicas:pd.DataFrame, dataframe_letras:pd.DataFrame)->list:
+    """
+
+
+    Parameters
+    ----------
+    dataframe_musicas : pd.DataFrame
+        Um dataframe que deve contar o nome da musica como uma coluna.
+    dataframe_letras : pd.DataFrame
+        Um dataframe que deve contar o nome da musica e suas letras.
+
+    Returns
+    -------
+    list
+    
+        A função devolve uma lista que para cada nome em um dataframe associa a letra dessa musica ou o valor None.
+
+    """
     lista = []
     
     for music_name in dataframe_musicas["nome"]:
