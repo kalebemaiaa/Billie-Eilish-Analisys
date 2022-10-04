@@ -1,65 +1,78 @@
 """
     Este arquivo serve para importar a base da dos utilizada para fazer as análises.
 """
-import time
+from time import sleep
 import requests
 import pandas as pd
 
-# API DEEZER
-dados_artista = requests.get("https://api.deezer.com/artist/9635624")
-dados_tracklist = requests.get(dados_artista.json()["tracklist"])
-
-musicas_data = dados_tracklist.json()["data"]
-
-estrutura_musicas = [{"album": music["album"]["title"].upper(),
-                      "duracao": music["duration"],
-                      "rank": music["rank"],
-                      "nome":music["title"].upper()} for music in musicas_data]
-
-df_musicas = pd.DataFrame(estrutura_musicas)
 
 # API VAGALUME
 # LINK: https://www.vagalume.com.br/
+KEY_APY_VAGALUME = "a829b6e84397c7592f558d850b888203"
+ARTIST_NAME = "billie-eilish"
 
+# API DEEZER
+BILLIE_ID_DEEZER = "9635624"
 
-KEY_APY = "a829b6e84397c7592f558d850b888203"
-ARTISTA = "billie-eilish"
-
-requisicao_artista = requests.get(
-    "https://www.vagalume.com.br/" + ARTISTA + "/index.js")
-
-dados_artista = requisicao_artista.json()
-
-musicas = [x for x in dados_artista["artist"]["lyrics"]["item"]]
-letras = []
-
-for song in musicas:
-    url = "https://api.vagalume.com.br/search.php?musid=" + \
-        song["id"] + "&apikey=" + KEY_APY
-    requisicao = requests.get(url)
-    try:
-        letras.append({"letra": requisicao.json()["mus"][0]["text"].upper(),
-                       "nome": requisicao.json()["mus"][0]["name"].upper()})
-    except requests.exceptions.JSONDecodeError:
-        print(requisicao, "\t-> RESTART MUITAS REQUISICOES")
-        time.sleep(10)
-        requisicao = requests.get(url)
-
-        letras.append({"letra": requisicao.json()["mus"][0]["text"].upper(),
-                       "nome": requisicao.json()["mus"][0]["name"].upper()})
-    else:
-        print(requisicao)
-
-df_letras = pd.DataFrame(letras)
-
-lista =[]
-for music_name in df_musicas["nome"]:
-    info = df_letras[df_letras["nome"]==music_name]["letra"].values
-    if len(info) == 1:
-        lista.append(info)
-    else:
-        lista.append(None)
+def get_data_deezer(artist_id):
+    url_artista = f"https://api.deezer.com/artist/{artist_id}"
+    dados_artista = requests.get(url_artista)
+    dados_tracklist = requests.get(dados_artista.json()["tracklist"])
     
-df_musicas = df_musicas.assign(letras=lista)
+    musicas_data = dados_tracklist.json()["data"]
+
+    estrutura_musicas = [{
+        "album": music["album"]["title"].upper(),
+        "duracao": music["duration"],
+        "rank": music["rank"],
+        "nome": music["title"].upper()} 
+        for music in musicas_data]
+
+    return pd.DataFrame(estrutura_musicas)
+
+def get_data_vagalume(chave_api, artista_name):
+    url_artista = f"https://www.vagalume.com.br/{artista_name}/index.js"
+    requisicao_artista_json = requests.get(url_artista).json()
+    music_data = [id_m for id_m in requisicao_artista_json["artist"]["lyrics"]["item"]]  
+    letras = []
+    for musica in music_data:
+        id_musica = musica["id"]
+        url_music = f"https://api.vagalume.com.br/search.php?musid={id_musica}&apikey={chave_api}"
+        requisicao_musica = requests.get(url_music)
+        try:
+            letras.append({
+                "letra": requisicao_musica.json()["mus"][0]["text"].upper(),
+                "nome": requisicao_musica.json()["mus"][0]["name"].upper()
+                })
+        except ValueError:
+            print("restart too many requests, codigo:\t", requisicao_musica)
+            sleep(4)
+            requisicao_musica = requests.get(url_music)
+            letras.append({
+                "letra": requisicao_musica.json()["mus"][0]["text"].upper(),
+                "nome": requisicao_musica.json()["mus"][0]["name"].upper()
+                })
+        else:
+            print(requisicao_musica)
+
+    return  pd.DataFrame(letras)
+
+def get_letras(dataframe_musicas, dataframe_letras):
+    lista = []
+    
+    for music_name in dataframe_musicas["nome"]:
+        info = dataframe_letras[dataframe_letras["nome"]==music_name]["letra"].values
+        if len(info) == 1:
+            lista.append(info)
+        else:
+            lista.append(None)
+    
+    return lista
+
+
+df_musicas = get_data_deezer(BILLIE_ID_DEEZER)
+df_letras = get_data_vagalume(KEY_APY_VAGALUME, ARTIST_NAME)
+df_musicas = df_musicas.assign(letras=get_letras(df_musicas, df_letras))
+
 df_musicas.to_csv("dados_musicas.csv")
     

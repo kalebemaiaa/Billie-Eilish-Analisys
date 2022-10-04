@@ -21,8 +21,6 @@ plt.show()
 
 
 # Plot pergunta 2 - Duracao musicas por album
-
-
 sns.set_theme()
 fig, ax = plt.subplots(figsize=(7, 3))
 sns.barplot(df_musicas , y = df_musicas["album"], x = df_musicas["duracao"], ax=ax)

@@ -6,50 +6,18 @@ import pandas as pd
 import auxiliar as aux
 
 df_musicas = pd.read_csv("dados_musicas.csv")
-df_letras = pd.read_csv("dados_letras.csv")
 
 # Pergunta 1
-# mais_ouvidas
-indice = df_musicas.groupby(["album"])["rank"].transform(
-    max) == df_musicas["rank"]
-# print(df_musicas[indice])
-
-# menos_ouvidas
-indice = df_musicas.groupby(["album"])["rank"].transform(
-    min) == df_musicas["rank"]
-# print(df_musicas[indice])
+# print(aux.lista_rank(df_musicas, "duracao", True ))
 
 # Pergunta 2
-# longas
-indice = df_musicas.groupby(["album"])["duracao"].transform(
-    max) == df_musicas["duracao"]
-# print(df_musicas[indice])
-
-
-# curtas
-indice = df_musicas.groupby(["album"])["duracao"].transform(
-    min) == df_musicas["duracao"]
-# print(df_musicas[indice])
+# print(aux.lista_rank(df_musicas, "rank", True ))
 
 # Pergunta 3
-# mais_ouvida
-indice = df_musicas.index == df_musicas["rank"].idxmax()
-# print(df_musicas[indice])
-
-# menos_ouvida
-indice = df_musicas.index == df_musicas["rank"].idxmin()
-# print(df_musicas[indice])
-
+# print(aux.lista_rank(df_musicas, "duracao", True,False))
 
 # Pergunta 4
-# mais_longa
-indice = df_musicas.index == df_musicas["duracao"].idxmax()
-# print(df_musicas[indice])
-
-# menos_ouvida\
-indice = df_musicas.index == df_musicas["duracao"].idxmin()
-# print(df_musicas[indice])
-
+# print(aux.lista_rank(df_musicas, "rank", True, False))
 
 # Pergunta 5
 
@@ -63,52 +31,16 @@ ordenando_rank_duracao = df_musicas.sort_values(
 
 # GRUPO 2
 # Pergunta 1
-lista = []
-for titulo in df_musicas["album"].unique():
-    titulo = aux.remove_parenteses(titulo)
-    palavras = titulo.split()
-    for palavra in palavras:
-        lista.append(palavra)
-
-contagem = pd.Series(lista).value_counts()
+#print(aux.count_words(df_musicas, "album"))
 
 # Pergunta 2
-lista = []
-for titulo_musica in df_musicas["nome"]:
-    titulo_musica = aux.remove_parenteses(titulo_musica)
-    for palavra in titulo_musica.split():
-        lista.append(palavra)
-
-contagem = pd.Series(lista).value_counts()
+#print(aux.count_words(df_musicas, "NOME"))
 
 # Pergunta 3
-lista_albuns = df_musicas["album"].unique()
-masks = []
-for album in lista_albuns:
-    idx = df_musicas["album"] == album
-    masks.append(idx)
-
-for idx in masks:
-    lista = []
-    for nome in df_musicas[idx]["nome"]:
-        mask = df_letras["nome"] == nome
-        for letra in df_letras[mask]["letra"]:
-            letra = aux.limpa_texto(letra)
-            for palavra in letra.split():
-                lista.append(palavra)
-
-    contagem = pd.Series(lista, dtype=object).value_counts()
-    print(contagem)
-
+#print(aux.count_words(df_musicas, "LETRA"))
 
 # Pergunta 4
-lista = []
-for letra in df_letras["letra"]:
-    letra = aux.limpa_texto(letra)
-    for palavra in letra.split():
-        lista.append(palavra)
-
-contagem = pd.Series(lista).value_counts()
+#print(aux.count_words(df_musicas))
 
 # Pergunta 5
 
@@ -123,19 +55,19 @@ contagem = pd.Series(lista).value_counts()
 
 #Grupo 3
 
-# Duracao media das músicas
+# Frequencia de lançamento por ano
 
 indice = df_musicas["duracao"].median()
 print(indice)
 
-# Variancia da duração das músicas
+# Media de beats por minuto de toda discografia
 
 
 indice = df_musicas["duracao"].var()
 print(indice)
 
 
-# Mediana da duração das músicas
+# Media de beats por minuto por album
 
 indice = df_musicas["duracao"].std()
 print(indice)

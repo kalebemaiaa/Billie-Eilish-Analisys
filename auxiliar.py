@@ -27,13 +27,13 @@ def remove_parenteses(texto: str) -> str:
         if ")" in palavras[i]:
             end = i
 
-    if begin != None and end != None:
+    if begin is None and end is None:
         return " ".join(palavras[:begin] + palavras[end + 1:])
 
     return " ".join(palavras)
 
 
-def lista_rank(dataframe: pd.DataFrame, atributo: str, condition: bool, inAlbum: bool = True) -> pd.Series:
+def lista_rank(dataframe: pd.DataFrame, atributo: str, condition: bool, in_album: bool = True) -> pd.Series:
     """
     Parametros
     ----------
@@ -44,7 +44,7 @@ def lista_rank(dataframe: pd.DataFrame, atributo: str, condition: bool, inAlbum:
     condition : bool
         Uma variavel booleana obrigatória que deve ser passada para procurar o valor minimo ou maximo.
         True significa valor maximo e False o valor minimo.
-    inAlbum : bool, optional
+    in_album : bool, optional
         Variavel booleana que refere-se ao escopo onde procurar as mais ouvidas. 
         O valor padrao é True.
 
@@ -76,7 +76,7 @@ def lista_rank(dataframe: pd.DataFrame, atributo: str, condition: bool, inAlbum:
             "O valor fornecido como argumento 'atributo' nao e uma chave para o dataframe")
 
     if condition == True:
-        if inAlbum == False:
+        if in_album == False:
             try:
                 index = dataframe.index == dataframe[atributo].idxmax()
             except TypeError:
@@ -92,7 +92,7 @@ def lista_rank(dataframe: pd.DataFrame, atributo: str, condition: bool, inAlbum:
 
         return dataframe[mais_ouvidas_album]
 
-    if inAlbum == False:
+    if in_album == False:
         try:
             index = dataframe.index == dataframe[atributo].idxmin()
         except TypeError:
@@ -145,7 +145,7 @@ def count_words(dataframe: pd.DataFrame, argumento=None):
             except KeyError:
                 base[chave] = valor
 
-    if argumento == None:
+    if argumento is None:
         for texto in dataframe["letras"]:
             if type(texto) == float:
                 continue
@@ -155,14 +155,14 @@ def count_words(dataframe: pd.DataFrame, argumento=None):
 
     if argumento.upper() == "ALBUM":
         for titulo_album in dataframe["album"].unique():
-            titulo_album = remove_parenteses(titulo_album)
+            #titulo_album = remove_parenteses(titulo_album)
             titulo_album = limpa_texto(titulo_album)
             dados = map_text(titulo_album)
             to_base(dados)
         return pd.Series(base).sort_values(ascending=False)
     if argumento.upper() == "NOME":
         for titulo_music in dataframe["nome"]:
-            titulo_music = remove_parenteses(titulo_music)
+            #titulo_music = remove_parenteses(titulo_music)
             titulo_music = limpa_texto(titulo_music)
             dados = map_text(titulo_music)
             to_base(dados)
