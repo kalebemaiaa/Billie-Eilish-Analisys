@@ -1,6 +1,7 @@
 """
     Este arquivo serve para importar a base da dos utilizada para fazer as analises.
 """
+
 from time import sleep
 import requests
 import pandas as pd
@@ -14,6 +15,7 @@ ARTIST_NAME = "billie-eilish"
 # API DEEZER
 BILLIE_ID_DEEZER = "9635624"
 
+<<<<<<< Updated upstream
 def get_data_deezer(artist_id:str)->pd.DataFrame:
     """
     Parameters
@@ -39,9 +41,30 @@ def get_data_deezer(artist_id:str)->pd.DataFrame:
         "rank": music["rank"],
         "nome": music["title"].upper()} 
         for music in musicas_data]
+=======
+def get_data_deezer(artist_id):
+    try:
+        url_artista = f"https://api.deezer.com/artist/{artist_id}"
+        dados_artista = requests.get(url_artista)
+        dados_tracklist = requests.get(dados_artista.json()["tracklist"])
+        
+        musicas_data = dados_tracklist.json()["data"]
+>>>>>>> Stashed changes
 
+        estrutura_musicas = [{
+            "album": music["album"]["title"].upper(),
+            "duracao": music["duration"],
+            "rank": music["rank"],
+            "nome": music["title"].upper()} 
+            for music in musicas_data]
+    except KeyError:
+        print(" Argumento invalido ")
+    else:
+        print(pd.DataFrame(estrutura_musicas))
+        
     return pd.DataFrame(estrutura_musicas)
 
+<<<<<<< Updated upstream
 get_data_deezer(BILLIE_ID_DEEZER)
 
 def get_data_vagalume(chave_api:str, artista_name:str)->pd.DataFrame:
@@ -59,6 +82,12 @@ def get_data_vagalume(chave_api:str, artista_name:str)->pd.DataFrame:
         Retorna um dataframe com os nomes das musicas e as suas respectibas letras.
 
     """
+=======
+
+
+
+def get_data_vagalume(chave_api, artista_name):
+>>>>>>> Stashed changes
     url_artista = f"https://www.vagalume.com.br/{artista_name}/index.js"
     requisicao_artista_json = requests.get(url_artista).json()
     music_data = [id_m for id_m in requisicao_artista_json["artist"]["lyrics"]["item"]]  
@@ -85,6 +114,7 @@ def get_data_vagalume(chave_api:str, artista_name:str)->pd.DataFrame:
 
     return  pd.DataFrame(letras)
 
+<<<<<<< Updated upstream
 def get_letras(dataframe_musicas:pd.DataFrame, dataframe_letras:pd.DataFrame)->list:
     """
 
@@ -103,6 +133,12 @@ def get_letras(dataframe_musicas:pd.DataFrame, dataframe_letras:pd.DataFrame)->l
         A função devolve uma lista que para cada nome em um dataframe associa a letra dessa musica ou o valor None.
 
     """
+=======
+
+
+
+def get_letras(dataframe_musicas, dataframe_letras):
+>>>>>>> Stashed changes
     lista = []
     
     for music_name in dataframe_musicas["nome"]:
