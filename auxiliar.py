@@ -9,8 +9,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 
-df_musicas = pd.read_csv("dados_musicas.csv")
-
 def limpa_texto(texto: str) -> str:
     """
     
@@ -522,10 +520,15 @@ def plota_words(resposta, imgPath:str, title:str = None):
         plt.title(title) 
         plt.show()
 
-def tag_clouds(num_perg: int, imgPath: str) -> None:
+def tag_clouds(dataframe: pd.DataFrame,num_perg: int, imgPath: str) -> None:
     """
     Parâmetros
     ----------
+    dataframe: pd.DataFrame
+        Recebe como argumento um dataframe que deve conter como colunas ao menos um dos 3 atributos a seguir:
+        1- letras
+        2- album
+        3- nome
     num_perg : float
         Recebe um argumento do tipo float que deve ser o número da pergunta 
     imgPath : str
@@ -538,6 +541,9 @@ def tag_clouds(num_perg: int, imgPath: str) -> None:
     ValueError
         Erro gerado caso o valor passado como num_perg nao esteja entre 1 e 4.
     """
+    if type(dataframe) != pd.DataFrame:
+        raise TypeError("O valor fornecido como argumento 'dataframe' nao e do tipo Dataframe!")
+
     if type(num_perg) != int:
         raise TypeError("O valor fornecido como argumento 'num_perg' deve ser do tipo int!")
 
@@ -548,15 +554,15 @@ def tag_clouds(num_perg: int, imgPath: str) -> None:
         raise ValueError("o valor fornecido como num_perg deve estar entre 1 e 4!")
     
     if num_perg == 1:
-        resposta = count_words(df_musicas, "ALBUM")
+        resposta = count_words(dataframe, "ALBUM")
         titulo = "Palavras nos titulos dos albuns"
         
     elif num_perg == 2:
-        resposta = count_words(df_musicas, "NOME")
+        resposta = count_words(dataframe, "NOME")
         titulo = "Palavras nos titulos das musicas"
         
     elif num_perg == 3:
-        resposta = count_words(df_musicas, "LETRA")
+        resposta = count_words(dataframe, "LETRA")
         lista_columnas = resposta.columns
         for coluna in lista_columnas:
             try:
@@ -569,7 +575,7 @@ def tag_clouds(num_perg: int, imgPath: str) -> None:
         return
         
     else:   
-        resposta = count_words(df_musicas)
+        resposta = count_words(dataframe)
         titulo = "Palavras nas letras em toda discografia"
         
     plota_words(resposta, imgPath, titulo)
