@@ -3,6 +3,11 @@
 Arquivo auxiliar com funcoes utilizadas para responder as perguntas.
 """
 import pandas as pd
+import os
+from PIL import Image
+import numpy as np
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
 
 df_musicas = pd.read_csv("dados_musicas.csv")
 
@@ -462,3 +467,109 @@ def recorrencia_titulos_musicas(dtframe: pd.DataFrame) -> pd.DataFrame:
         dicionario[musica] = dicionario_musica
 
     return pd.DataFrame(dicionario).fillna("-")
+
+def plota_words(resposta, imgPath:str, title:str = None):
+    """
+    
+    Parameters
+    ----------
+    resposta : pd.DataFrame or pd.Series
+        O dataframe ou serie passada servira como base de daos para a plotagem da tag cloud.
+    imgPath : TYPE
+        O caminho para a imagem escolhida.
+    title : TYPE, optional
+        Titulo para a figura. The default is None.
+
+    Returns
+    -------
+    None.
+
+    """
+    if type(imgPath) != str:
+        raise TypeError("O valor passado como caminho da imagem nao e do tipo str")
+        
+    lista = []
+    for i in range(resposta.size):
+        COUNT = 0
+        
+        while COUNT < resposta.values[i]:
+            lista.append(resposta.index[i])
+            COUNT += 1
+        
+
+    TEXT = " ".join(lista)
+
+    try:
+        img = np.array(Image.open(imgPath))
+        
+    except FileNotFoundError:
+        print("Nao foi possivel abrir nenhum arquivo atraves do path passado!")
+        
+    else:
+        WC = WordCloud(background_color="#000", 
+                       max_words=1000,
+                       mask=img, max_font_size=50, 
+                       collocations = False, 
+                       contour_width=0.2,
+                       contour_color = "#F4FAFC",
+                       colormap="Set1" )
+    
+        WC.generate(TEXT)
+        
+        plt.imshow(WC, interpolation="bilinear")
+        plt.axis("off")
+        plt.style.use('dark_background')
+        plt.title(title) 
+        plt.show()
+
+def tag_clouds(num_perg: int, imgPath: str) -> None:
+    """
+    Parâmetros
+    ----------
+    num_perg : float
+        Recebe um argumento do tipo float que deve ser o número da pergunta 
+    imgPath : str
+        Recebe o caminho da imagem no sistema
+
+    Raises
+    ------
+    TypeError
+        Erro gerado quando algum dos argumentos fornecidos não é do tipo especificado 
+    ValueError
+        Erro gerado caso o valor passado como num_perg nao esteja entre 1 e 4.
+    """
+    if type(num_perg) != int:
+        raise TypeError("O valor fornecido como argumento 'num_perg' deve ser do tipo int!")
+
+    if type(imgPath) != str:
+        raise TypeError("O valor fornecido como argumento 'imgPath' deve ser do tipo str!")
+    
+    if num_perg not in [1,2,3,4]:
+        raise ValueError("o valor fornecido como num_perg deve estar entre 1 e 4!")
+    
+    if num_perg == 1:
+        resposta = count_words(df_musicas, "ALBUM")
+        titulo = "Palavras nos titulos dos albuns"
+        
+    elif num_perg == 2:
+        resposta = count_words(df_musicas, "NOME")
+        titulo = "Palavras nos titulos das musicas"
+        
+    elif num_perg == 3:
+        resposta = count_words(df_musicas, "LETRA")
+        lista_columnas = resposta.columns
+        for coluna in lista_columnas:
+            try:
+                mini_resposta = resposta[coluna]
+                
+                titulo = f"Palavras nas letras do album: {coluna}"
+                plota_words(mini_resposta, imgPath, titulo)
+            except ValueError:
+                continue
+        return
+        
+    else:   
+        resposta = count_words(df_musicas)
+        titulo = "Palavras nas letras em toda discografia"
+        
+    plota_words(resposta, imgPath, titulo)
