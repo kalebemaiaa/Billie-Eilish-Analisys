@@ -11,8 +11,6 @@ import seaborn as sns
 
 def limpa_texto(texto: str) -> str:
     """
-    
-
     Parameters
     ----------
     texto : str
@@ -22,12 +20,10 @@ def limpa_texto(texto: str) -> str:
     -------
     str
         Retorna o texto limpo. Caso o argumento recebido nao seja do tipo string, retorna None.
-    
     """
     lista = []
-    if type(texto ) != str:
+    if not isinstance(texto, str):
         return
-    
     texto = texto.replace("\\n", " ")
     for palavra in texto:
         palavra = "".join(
@@ -38,8 +34,6 @@ def limpa_texto(texto: str) -> str:
 
 def remove_parenteses(texto: str) -> str:
     """
-    
-
     Parameters
     ----------
     texto : str
@@ -70,11 +64,11 @@ def lista_rank(dataframe: pd.DataFrame, atributo: str, condition: bool, in_album
     Parametros
     ----------
     dataframe : pd.DataFrame
-        Recebe um argumento do tipo Dataframe que deve possuir como colunas as chaves: rank e duracao 
+        Recebe um argumento do tipo Dataframe que deve possuir como colunas as chaves:rank e duracao
     atributo : str
         O atributo se refere a uma coluna do Dataframe
     condition : bool
-        Uma variavel booleana obrigatória que deve ser passada para procurar o valor minimo ou maximo.
+        Uma variavel booleana obrigatória que deve ser passada para procurar o valor min o max.
         True significa valor maximo e False o valor minimo.
     in_album : bool, optional
         Variavel booleana que refere-se ao escopo onde procurar as mais ouvidas. 
@@ -230,7 +224,6 @@ def count_words_album(nome_album:str, dataframe: pd.DataFrame) -> pd.Series:
         for letra in dataframe[dataframe["album"] == nome_album]["letras"]:
             if type(letra) == float:
                 continue
-            
             dados = map_text(letra)
             base = concat_sum_dict(dados, base)
     
@@ -276,8 +269,6 @@ def count_word_title(lista_titulos) -> dict:
 
 def count_words(dataframe: pd.DataFrame, argumento=None)-> pd.DataFrame:
     """
-    
-
     Parameters
     ----------
     dataframe : pd.DataFrame
@@ -667,59 +658,63 @@ def palavras_por_minuto(dataframe:pd.DataFrame, in_album = False):
         dicionario[album] = total_palavras / duracao_album
     return dicionario
 
-def plotar_graficos(dataframe,eixoy,eixox,texto):
-
+def plotar_graficos(dataframe:pd.DataFrame, num_perg:int)-> None:
     """
-    Parametros
-    ----------
-    eixoy : É o parametro no qual estará na forma string, onde nele dirá qual dado do
-            df_musicas será o eixo y no gráfico plotado
 
-    eixox : É o parametro no qual estará na forma string, onde nele dirá qual dado do
-             df_musicas será o eixo x no gráfico plotado
+    Args:
+        dataframe (pd.DataFrame): dataframe onde se espera algumas colunas 
+        num_perg (int): o numero da pergunta do grupo 1. E um inteiro entre 1 e 6
 
-    texto : É onde ficará o titulo do gráfico
-    
-    Raises
-    ------
-    KeyError
-        Erro gerado quando o argumento fornecido não está no dataframe df_músicas
+    Raises:
+        TypeError: erro gerado caso o argumento dataframe nao seja do tipo Dataframe ou o argumento num_perg nao seja do tipo int
+        ValueError: erro gerado caso o argumento num_perg nao esteja dentro do intervalo desejado
 
-    Return
-    -------
-        Retorna um gráfico com os eixos conhecidos
-
+    Returns:
+        None: Plota um grafico 
     """
-    
+    if not isinstance(dataframe, pd.DataFrame):
+        raise TypeError("O argumento inserido como dataframe nao e do tipo dataframe")
+        
+    if not isinstance(num_perg, int):
+        raise TypeError("O argumento inserido como num_per nao e do tipo inteiro")
+
+    if num_perg not in [1,2,3,4,5,6]:
+        raise ValueError("O argumento fornecido como num_perg deve ser do tipo int.")
+
+    eixoy, eixox = None, None
+
+    if num_perg == 1:
+        eixox, eixoy = "rank", "album"
+        titulo = ""
+    elif num_perg == 2:
+        eixox, eixoy = "duracao", "album"
+        titulo = ""
+    elif num_perg == 3:
+        eixox, eixoy = "rank", "nome"
+        titulo = ""
+    elif num_perg == 4:
+        eixox, eixoy = "duracao", "nome"
+        titulo = ""
+    elif num_perg == 5:
+        lista_albuns_premiados = ["Happier Than Ever", "When We All 'Fall Asleep, Where Do We Go?"]
+        lista_numero_premiacoes = [1,8]
+        sns.barplot(y = lista_numero_premiacoes, x = lista_albuns_premiados, width=0.2)
+        plt.title("Albuns Premiados")
+        return plt.show()
+    else:
+        eixox, eixoy = "duracao", "nome"
+        plt.scatter(dataframe["duracao"], dataframe["rank"])
+        plt.title("Relação entre a duração e popularidade de uma música")
+        return plt.show()
 
     plt.rcParams["figure.figsize"] = [7.50, 3.50]
     plt.rcParams["figure.autolayout"] = True
-
-
+    fig, ax = plt.subplots(figsize=(7, 3))
     try:
-        sns.set_theme(palette="magma")
-        fig, ax = plt.subplots(figsize=(7, 3))
-        sns.barplot(dataframe , y = dataframe[eixoy], x = dataframe[eixox], ax=ax)
-        ax.set_title(texto)
+        sns.barplot(dataframe , y = dataframe[eixoy], x = dataframe[eixox], ax=ax, width=0.3)
+        ax.set_title(titulo)
         ax.figure.set_size_inches(12,12)
-    except KeyError:
-        print("Passe um argumento válido")
+    except KeyError as ke:
+        print("O dataframe inserido nao possui os atributos esperados!\n\t",ke)
     else:
         plt.show()
-    return
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
