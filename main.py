@@ -51,19 +51,32 @@ print(aux.recorrencia_titulos_albuns(df_musicas))
 print(aux.recorrencia_titulos_musicas(df_musicas))
 
 #Grupo 3
-# Frequencia de lançamento por ano
+# Duracao media das musicas em toda discografia e por album
+print(aux.duracao_media(df_musicas))
 
+# Media de palavras por minuto em toda discografia
+print(aux.palavras_por_minuto(df_musicas))
 
-# Media de beats por minuto de toda discografia
-
-
-# Media de beats por minuto por album
-
-#
+# Media de palavras por minuto por album
+print(aux.palavras_por_minuto(df_musicas, True))
 
 # Visualizacao
-
 # Seaborn
+#Plot pergunta 1 - grafico do rank das musicas por album
+
+aux.plotar_graficos(df_musicas,"album","rank", "Gráfico do rank das músicas por álbum ( na base 10^6 )")
+
+# Plot pergunta 2 - Duracao musicas por album
+
+aux.plotar_graficos(df_musicas, "album","duracao", "Gráfico da duração das músicas por álbum")
+
+#Plot pergunta 3 - grafico do rank das musicas total
+
+aux.plotar_graficos(df_musicas, "nome","rank", "Gráfico do rank de todas as músicas ( na base 10^6 )")
+
+# Plot pergunta 4 - Duracao musicas total
+
+aux.plotar_graficos(df_musicas, "nome","duracao", "Gráfico da duração de todas as músicas")
 
 # Tag Cloud
 aux.tag_clouds(df_musicas, 1, "img/be.jpeg")

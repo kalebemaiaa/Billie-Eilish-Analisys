@@ -3,11 +3,11 @@
 Arquivo auxiliar com funcoes utilizadas para responder as perguntas.
 """
 import pandas as pd
-import os
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
+import seaborn as sns
 
 def limpa_texto(texto: str) -> str:
     """
@@ -26,9 +26,9 @@ def limpa_texto(texto: str) -> str:
     """
     lista = []
     if type(texto ) != str:
-        print(texto)
         return
     
+    texto = texto.replace("\\n", " ")
     for palavra in texto:
         palavra = "".join(
             ["" if x in "?!@#$%¨&*-?\\/|;.,1234567890[]()\"~'^" else x.upper() for x in palavra])
@@ -156,7 +156,6 @@ def map_text(texto: str) -> dict:
     if type(texto) != str:
         raise TypeError("O argumento inserido nao e do tipo string!")
         
-    texto = texto.replace("\\n", " ")
     texto = limpa_texto(texto)
     dicionario = {}
     for word in texto.split():
@@ -576,6 +575,151 @@ def tag_clouds(dataframe: pd.DataFrame,num_perg: int, imgPath: str) -> None:
         
     else:   
         resposta = count_words(dataframe)
-        titulo = "Palavras nas letras em toda discografia"
-        
+        titulo = "Palavras nas letras em toda discografia"     
     plota_words(resposta, imgPath, titulo)
+
+def duracao_media(dataframe:pd.DataFrame) -> dict:
+    """
+    Args:
+        dataframe (pd.DataFrame): Argumento do tipo dataframe que deve possuir as colunas 'album' e 'duracao'
+    Raises:
+        TypeError: erro gerado caso o argumento inserido nao seja do tipo dataframe
+        ValueError: erro gerado caso o dataframe nao possua um dos atributos esperados
+
+    Returns:
+        dict: _description_
+    """
+    if not isinstance(dataframe, pd.DataFrame):
+        raise TypeError("O argumento inserido nao e do tipo DataFrame!")
+    if "album" not in dataframe.columns :
+        raise ValueError("O dataframe inserido nao tem o atributo album!")
+    if "duracao" not in dataframe.columns :
+        raise ValueError("O dataframe inserido nao tem o atributo duracao!")
+
+    lista_albuns = dataframe["album"].unique()
+    dicionario = {
+        "all_discografia": dataframe["duracao"].mean()
+    }
+    for album in lista_albuns:
+        mask = dataframe["album"] == album
+        media_album = dataframe[mask]["duracao"].mean()
+        dicionario[album] = media_album
+    return dicionario
+
+def lista_palavras(serie:pd.Series) -> list:
+    """
+
+    Args:
+        serie (pd.Series): Serie que contenha as letras.
+
+    Raises:
+        TypeError: erro gerado caso o argumento nao seja do tipo Series.
+
+    Returns:
+        list: retorna uma lista com todas as palavras da letra.
+    """
+    if not isinstance(serie, pd.Series):
+        raise TypeError("O argumento inserido nao e do tipo Series")
+    words_list = []
+    for letra in serie:
+        letra = limpa_texto(letra)
+
+        if letra is None:
+            continue
+        for palavra in letra.split():
+            words_list.append(palavra)
+    return words_list
+
+def palavras_por_minuto(dataframe:pd.DataFrame, in_album = False):
+    """
+
+    Args:
+        dataframe (pd.DataFrame): Argumento que deve possuir, ao menos, as colunas 'letras' e 'duracao'
+        in_album (bool, optional): Argumento que avaliar o escopo do funcao. Se for True, avaliara a quantidade de palavras por minuto em cada album. Se for False, avaliara a quantidade de palavras por minuto em toda discografia. Defaults to False.
+
+    Raises:
+        TypeError: Erro gerado caso algum dos argumentos inseridos nao seja do tipo esperado.
+        ValueError: Erro gerado caso o dataframe nao possua alguma das colunas esperadas.
+
+    Returns:
+        float or dict: retorna um numero com ponto flutuante ou um dicionario com nome de albuns com key e numeros de ponto flutuante como values.
+    """
+    if not isinstance(dataframe, pd.DataFrame):
+        raise TypeError("O argumento inserido como dataframe nao e do tipo Dataframe!")
+    if not isinstance(in_album, bool):
+        raise TypeError("O argumento inserido como in_album nao e do tipo booleano!")
+    if "letras" not in dataframe.columns:
+        raise ValueError("O dataframe passado nao possui 'letras' como coluna.")
+    if "duracao" not in dataframe.columns:
+        raise ValueError("O dataframe passado nao possui 'duracao' como coluna.")
+    if in_album is False:
+        total_palavras = len(lista_palavras(dataframe["letras"]))
+        total_minutos = dataframe["duracao"].sum() / 60
+        return total_palavras / total_minutos
+
+    dicionario = {}
+    lista_albuns = dataframe["album"].unique()
+
+    for album in lista_albuns:
+        mask = dataframe["album"] == album
+        total_palavras = len(lista_palavras(dataframe[mask]["letras"]))
+        duracao_album = dataframe[mask]["duracao"].sum() / 60
+        dicionario[album] = total_palavras / duracao_album
+    return dicionario
+
+def plotar_graficos(dataframe,eixoy,eixox,texto):
+
+    """
+    Parametros
+    ----------
+    eixoy : É o parametro no qual estará na forma string, onde nele dirá qual dado do
+            df_musicas será o eixo y no gráfico plotado
+
+    eixox : É o parametro no qual estará na forma string, onde nele dirá qual dado do
+             df_musicas será o eixo x no gráfico plotado
+
+    texto : É onde ficará o titulo do gráfico
+    
+    Raises
+    ------
+    KeyError
+        Erro gerado quando o argumento fornecido não está no dataframe df_músicas
+
+    Return
+    -------
+        Retorna um gráfico com os eixos conhecidos
+
+    """
+    
+
+    plt.rcParams["figure.figsize"] = [7.50, 3.50]
+    plt.rcParams["figure.autolayout"] = True
+
+
+    try:
+        sns.set_theme(palette="magma")
+        fig, ax = plt.subplots(figsize=(7, 3))
+        sns.barplot(dataframe , y = dataframe[eixoy], x = dataframe[eixox], ax=ax)
+        ax.set_title(texto)
+        ax.figure.set_size_inches(12,12)
+    except KeyError:
+        print("Passe um argumento válido")
+    else:
+        plt.show()
+    return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
