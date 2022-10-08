@@ -1,6 +1,6 @@
 # Billie Eillish 
 
-Neste trabalho reunimos dados da cantora Billie Eilish, seu album, músicas do album, letras, duração e rank, tudo tirado da plataforma Deezer e Vagalume, através de suas API's. Além disso, respondemos perguntas sobre algumas caracteristicas de sua discografia e plotamos gráficos de algumas perguntas dadas, utilizando a biblioteca Seaborn, juntamente com Matplotlib, e a biblioteca WordCloud. 
+Neste trabalho reunimos dados da cantora Billie Eilish, seus álbuns, músicas dos álbuns, letras, duração e rank, tudo tirado da plataforma Deezer e Vagalume, através de suas API's. Além disso, respondemos perguntas sobre algumas características de sua discografia e plotamos gráficos de algumas perguntas dadas, utilizando a biblioteca Seaborn, juntamente com Matplotlib, e a biblioteca WordCloud. 
 
 ## Explicação
 
@@ -10,11 +10,11 @@ Há 3 arquivos principais, sendo eles, o arquivo main.py, auxiliar.py e import_d
 
 ### Importação dos dados
 
-Para importar os dados necessários para responder as perguntas propostas, utiliza-se o arquivo import_data.py. Este arquivo, resumidamente, utiliza os dados de id do artista, no Deezer e na plataforma Vagalume, para acessar informações sobre a discografia do artista e salva-las em um arquivo .csv, futuramente convertido em dataframe. 
+Para importar os dados necessários para responder as perguntas propostas, utiliza-se o arquivo import_data.py. Este arquivo, resumidamente, utiliza os dados de id da artista, no Deezer e na plataforma Vagalume, para acessar informações sobre a discografia do artista e salvá-las em um arquivo .csv, futuramente convertido em dataframe. 
 
 ### Perguntas 
 
-Para responder as perguntas, propõe-se no arquivo main.py um exemplo de como utilizar as fuções desenvolvidas para gerar dataframes que colaboram na extração de informações do dados adquiridos.
+Para responder as perguntas, propõe-se no arquivo main.py um exemplo de como utilizar as funções desenvolvidas para gerar dataframes que colaboram na extração de informações dos dados adquiridos.
 
 ### Visualização (Gráficos e TagCloud)
   
