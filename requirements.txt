@@ -1,3 +1,4 @@
 pandas==1.4.3
 requests==2.28.1
 WordCloud==1.8.2.2
+seaborn==0.12.0
